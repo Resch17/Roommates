@@ -135,11 +135,17 @@ namespace Roommates
                         int roommateIdToAssign = int.Parse(Console.ReadLine());
 
                         choreRepo.AssignChore(roommateIdToAssign, choreIdToAssign);
+
                         string assignedRoommate = allRoommates.Find(r => r.Id == roommateIdToAssign).FirstName;
                         string assignedChore = allChores.Find(c => c.Id == choreIdToAssign).Name;
 
                         Console.WriteLine($"\"{assignedChore}\" has been assigned to {assignedRoommate}.");
 
+                        Console.Write("Press any key to continue");
+                        Console.ReadKey();
+                        break;
+                    case ("Get chore counts"):
+                        choreRepo.GetChoreCounts();
                         Console.Write("Press any key to continue");
                         Console.ReadKey();
                         break;
@@ -166,6 +172,7 @@ namespace Roommates
                 "Search for roommate",
                 "Show unassigned chores",
                 "Assign chore to roommate",
+                "Get chore counts",
                 "Exit"
             };
 
