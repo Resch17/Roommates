@@ -1,5 +1,6 @@
 ﻿using Microsoft.Data.SqlClient;
 using Roommates.Models;
+using System;
 using System.Collections.Generic;
 
 namespace Roommates.Repositories
@@ -138,6 +139,65 @@ namespace Roommates.Repositories
                 }
             }
             // when this method is finished we can look in the database and see the new room.
+        }
+
+        /// <summary>
+        /// Updates the room
+        /// </summary>
+        public void Update(Room room)
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"UPDATE Room
+                                            SET Name = @name,
+                                                MaxOccupancy = @maxOccupancy
+                                            WHERE Id = @id";
+                    cmd.Parameters.AddWithValue("@name", room.Name);
+                    cmd.Parameters.AddWithValue("@maxOccupancy", room.MaxOccupancy);
+                    cmd.Parameters.AddWithValue("@id", room.Id);
+
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
+        /// <summary>
+        ///  Delete the room with the given id, moves room's residents to the basement
+        /// </summary>
+        public void Delete(int id)
+        {
+            if (id != 6)
+            {
+                using (SqlConnection conn = Connection)
+                {
+                    conn.Open();
+                    using (SqlCommand cmd = conn.CreateCommand())
+                    {
+                        cmd.CommandText = @"UPDATE Roommate
+                                                SET RoomId = 6
+                                            WHERE RoomId = @id";
+                        cmd.Parameters.AddWithValue("@id", id);
+                        cmd.ExecuteNonQuery();
+                    }
+                    using (SqlCommand cmd = conn.CreateCommand())
+                    {
+                        // What do you think this code will do if there is a roommate in the room we're deleting???
+                        cmd.CommandText = "DELETE FROM Room WHERE Id = @id";
+                        cmd.Parameters.AddWithValue("@id", id);
+                        cmd.ExecuteNonQuery();
+                    }
+                    Console.WriteLine("Room deleted");
+                }
+            } else
+            {
+                Console.WriteLine("How are you going to delete a basement?");
+                Console.WriteLine(" ");
+                Console.WriteLine("Press any key to continue...");
+                Console.ReadKey();
+            }
         }
 
     }

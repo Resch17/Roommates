@@ -149,6 +149,38 @@ namespace Roommates
                         Console.Write("Press any key to continue");
                         Console.ReadKey();
                         break;
+                    case ("Update a room"):
+                        List<Room> roomOptions = roomRepo.GetAll();
+                        foreach(Room r in roomOptions)
+                        {
+                            Console.WriteLine($"{r.Id} - {r.Name} Max Occupancy({r.MaxOccupancy})");
+                        }
+
+                        int selectedRoomId = int.Parse(Console.ReadLine());
+                        Room selectedRoom = roomOptions.FirstOrDefault(r => r.Id == selectedRoomId);
+
+                        Console.Write("New Name: ");
+                        selectedRoom.Name = Console.ReadLine();
+
+                        Console.Write("New Max Occupancy: ");
+                        selectedRoom.MaxOccupancy = int.Parse(Console.ReadLine());
+
+                        roomRepo.Update(selectedRoom);
+
+                        Console.WriteLine($"Room has been successfully updated");
+                        Console.Write("Press any key to continue");
+                        Console.ReadKey();
+                        break;
+                    case ("Delete a room"):
+                        List<Room> roomsList = roomRepo.GetAll();
+                        foreach (Room r in roomsList)
+                        {
+                            Console.WriteLine($"{r.Name} has an Id of {r.Id} and a max occupancy of {r.MaxOccupancy}");
+                        }
+                        Console.Write("Room (id) to delete: ");
+                        int roomToDelete = int.Parse(Console.ReadLine());
+                        roomRepo.Delete(roomToDelete);
+                        break;
                     case ("Exit"):
                         runProgram = false;
                         break;
@@ -173,6 +205,8 @@ namespace Roommates
                 "Show unassigned chores",
                 "Assign chore to roommate",
                 "Get chore counts",
+                "Update a room",
+                "Delete a room",
                 "Exit"
             };
 
