@@ -102,21 +102,54 @@ namespace Roommates.Repositories
             }
         }
 
-        //public List<Chore> GetUnassignedChores()
-        //{ 
-        //    using (SqlConnection conn = Connection)
-        //    {
-        //        conn.Open();
+        public List<Chore> GetUnassignedChores()
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
 
-        //        using (SqlCommand cmd = conn.CreateCommand())
-        //        {
-        //            cmd.CommandText = "";
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"SELECT c.Name as Chore 
+	                                        FROM Chore c
+	                                        LEFT JOIN RoommateChore rc on c.Id = rc.ChoreId
+	                                        WHERE rc.Id IS NULL;";
 
-        //            SqlDataReader reader = cmd.ExecuteReader();
+                    SqlDataReader reader = cmd.ExecuteReader();
 
-        //            List<Chore> chores = new List<Chore>();
-        //        }
-        //    }
-        //}
+                    List<Chore> chores = new List<Chore>();
+
+                    while (reader.Read())
+                    {
+                        string nameValue = reader.GetString(reader.GetOrdinal("Chore"));
+                        Chore chore = new Chore
+                        {
+                            Name = nameValue
+                        };
+
+                        chores.Add(chore);
+                    }
+                    reader.Close();
+
+                    return chores;
+                }
+            }
+        }
+
+        public void AssignChore(int roommateId, int choreId)
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"INSERT INTO RoommateChore (RoommateId, ChoreId)
+                                            Values (@roommateId, @choreId)";
+                    cmd.Parameters.AddWithValue("@roommateId", roommateId);
+                    cmd.Parameters.AddWithValue("@choreId", choreId);
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
     }
 }

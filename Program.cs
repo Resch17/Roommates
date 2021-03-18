@@ -2,6 +2,7 @@
 using Roommates.Repositories;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Roommates
 {
@@ -106,6 +107,42 @@ namespace Roommates
                         Console.Write("Press any key to continue");
                         Console.ReadKey();
                         break;
+                    case ("Show unassigned chores"):
+                        List<Chore> unassignedChores = choreRepo.GetUnassignedChores();
+                        foreach (Chore c in unassignedChores)
+                        {
+                            Console.WriteLine($"{c.Name}");
+                        }
+                        Console.Write("Press any key to continue");
+                        Console.ReadKey();
+                        break;
+                    case ("Assign chore to roommate"):
+                        Console.WriteLine("Select a chore from the list:");
+                        List<Chore> allChores = choreRepo.GetAll();
+                        foreach (Chore c in allChores)
+                        {
+                            Console.WriteLine($"{c.Name} - Id: {c.Id}");
+                        }
+                        Console.Write("Chore Id: ");
+                        int choreIdToAssign = int.Parse(Console.ReadLine());
+                        Console.WriteLine("Select a roommate for that chore:");
+                        List<Roommate> allRoommates = roommateRepository.GetAll();
+                        foreach (Roommate r in allRoommates)
+                        {
+                            Console.WriteLine($"{r.FirstName} - Id: {r.Id}");
+                        }
+                        Console.Write("Roommate Id: ");
+                        int roommateIdToAssign = int.Parse(Console.ReadLine());
+
+                        choreRepo.AssignChore(roommateIdToAssign, choreIdToAssign);
+                        string assignedRoommate = allRoommates.Find(r => r.Id == roommateIdToAssign).FirstName;
+                        string assignedChore = allChores.Find(c => c.Id == choreIdToAssign).Name;
+
+                        Console.WriteLine($"\"{assignedChore}\" has been assigned to {assignedRoommate}.");
+
+                        Console.Write("Press any key to continue");
+                        Console.ReadKey();
+                        break;
                     case ("Exit"):
                         runProgram = false;
                         break;
@@ -127,6 +164,8 @@ namespace Roommates
                 "Search for chore",
                 "Add a chore",
                 "Search for roommate",
+                "Show unassigned chores",
+                "Assign chore to roommate",
                 "Exit"
             };
 

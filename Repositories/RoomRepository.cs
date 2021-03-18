@@ -56,8 +56,8 @@ namespace Roommates.Repositories
                         int nameColumnPosition = reader.GetOrdinal("Name");
                         string nameValue = reader.GetString(nameColumnPosition);
 
-                        int maxOccupancyColumPosition = reader.GetOrdinal("MaxOccupancy");
-                        int maxOccupancy = reader.GetInt32(maxOccupancyColumPosition);
+                        int maxOccupancyColumnPosition = reader.GetOrdinal("MaxOccupancy");
+                        int maxOccupancy = reader.GetInt32(maxOccupancyColumnPosition);
 
                         // Now let's create a new room object using the data from the database.
                         Room room = new Room
@@ -129,6 +129,10 @@ namespace Roommates.Repositories
                     cmd.Parameters.AddWithValue("@name", room.Name);
                     cmd.Parameters.AddWithValue("@maxOccupancy", room.MaxOccupancy);
                     int id = (int)cmd.ExecuteScalar();
+                    // The cmd.ExecuteScalar method does two things:
+                    // First, it executes the SQL command against the database.
+                    // Then it looks at the first thing that the database sends back
+                    // (in our case this is just the Id it created for the room) and returns it.
 
                     room.Id = id;
                 }
