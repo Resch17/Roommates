@@ -12,6 +12,9 @@ namespace Roommates.Repositories
     {
         public ChoreRepository(string connectionString) : base(connectionString) { }
 
+        /// <summary>
+        ///  Get a list of all chores in the database
+        /// </summary>
         public List<Chore> GetAll()
         {
             using (SqlConnection conn = Connection)
@@ -46,7 +49,9 @@ namespace Roommates.Repositories
                 }    
             }
         }
-
+        ///<summary>
+        /// Returns a single chore with the given id.
+        /// </summary>
         public Chore GetById(int id)
         {
             using (SqlConnection conn = Connection)
@@ -74,5 +79,44 @@ namespace Roommates.Repositories
                 }
             }
         }
+        /// <summary>
+        ///  Add a new chore to the database
+        ///   NOTE: This method sends data to the database,
+        ///   it does not get anything from the database, so there is nothing to return.
+        /// </summary>
+        public void Insert(Chore chore)
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"INSERT INTO Chore (Name)
+                                            OUTPUT INSERTED.Id
+                                            Values (@name)";
+                    cmd.Parameters.AddWithValue("@name", chore.Name);
+                    int id = (int)cmd.ExecuteScalar();
+
+                    chore.Id = id;
+                }
+            }
+        }
+
+        //public List<Chore> GetUnassignedChores()
+        //{ 
+        //    using (SqlConnection conn = Connection)
+        //    {
+        //        conn.Open();
+
+        //        using (SqlCommand cmd = conn.CreateCommand())
+        //        {
+        //            cmd.CommandText = "";
+
+        //            SqlDataReader reader = cmd.ExecuteReader();
+
+        //            List<Chore> chores = new List<Chore>();
+        //        }
+        //    }
+        //}
     }
 }
